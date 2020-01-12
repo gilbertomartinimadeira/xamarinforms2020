@@ -15,17 +15,22 @@ namespace App01_ConsultaCEP.Services
 
         public Task<Endereco> BuscarEnderecoViaCEP(string cep)
         {
-            string novoEnderecoURL = string.Format(_enderecoURL, cep);
-            
-            Endereco end;
-            var wc = new WebClient();
+            string novoEnderecoURL = string.Format(_enderecoURL, cep);            
 
+            var webClient = new WebClient();
 
-            string conteudo = wc.DownloadString(new Uri(novoEnderecoURL));
-           
-            end = JsonConvert.DeserializeObject<Endereco>(conteudo);
+            string conteudo;
 
-            return Task.FromResult(end);
+            try
+            {
+                conteudo = webClient.DownloadString(new Uri(novoEnderecoURL));
+                
+                return Task.FromResult(JsonConvert.DeserializeObject<Endereco>(conteudo));
+            }
+            catch
+            {
+                return Task.FromResult(new Endereco("","","","","","","","",""));
+            }                                
         }    
 
         
